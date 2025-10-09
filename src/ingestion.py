@@ -20,7 +20,7 @@ def extract_topics(transcript_text: str, model_name="gpt-4o-mini"):
     return [t.strip("-• ") for t in topics if t.strip()]
 
 
-def pipeline(audio_dir=Path("data/podcasts-eng"), transcript_dir=Path("data/transcripts"), processed_dir=Path("data/processed"), whisper_model_size="small"):
+def pipeline(audio_dir, transcript_dir, processed_dir, whisper_model_size):
     # prepare directories
     print(f"hello")
     transcript_dir.mkdir(parents=True, exist_ok=True)
@@ -58,10 +58,8 @@ def pipeline(audio_dir=Path("data/podcasts-eng"), transcript_dir=Path("data/tran
         # print(f"Saved enriched transcript: {processed_path.name}\n")
 
 def main():
-    print(Path("data/podcasts-eng"))
-    print(Path("data/transcripts"))
-    print(Path("data/processed"))
-    pipeline(Path("data/podcasts-eng"), Path("data/transcripts"), Path("data/processed"), "small")
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent
+    pipeline(PROJECT_ROOT / "data/podcasts-eng", PROJECT_ROOT / "data/transcripts", PROJECT_ROOT / "data/processed", "small")
 
 if __name__ == "__main__":
     main()
