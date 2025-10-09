@@ -11,6 +11,8 @@ load_dotenv()
 API_KEY = os.getenv("PODCAST_INDEX_KEY")
 API_SECRET = os.getenv("PODCAST_INDEX_SECRET")
 BASE_URL = "https://api.podcastindex.org/api/1.0"
+
+# access the data folder outside of src
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RAW_DATA_DIR = PROJECT_ROOT / "data/podcasts-eng"
 RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -92,6 +94,7 @@ def download_audio(episodes):
         filename = f"{title}.mp3"
         filepath = RAW_DATA_DIR / filename
 
+        # don't download if it exists already
         if filepath.exists():
             print(f"Already downloaded: {filename}")
             continue
