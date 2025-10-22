@@ -53,7 +53,7 @@ export default function AudioRecorder() {
         readOnly
         rows={10}
         cols={50}
-        className="border p-2 w-full max-w-xl"
+        className="border p-2 w-full max-w-xl sm:min-w-[300px]"
       />
     </div>
   );

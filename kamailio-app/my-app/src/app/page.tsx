@@ -14,13 +14,13 @@ import AudioRecorder from "./components/audio-recorder";
 
 export default function Home() {
   return (
-    <div className="font-mono flex flex-col items-center justify-center min-h-screen">
-      <main className="">
-        <h1 className="text-3xl font-bold text-white justify-center">
-          <a className="hover:underline hover:underline-offset-4" href="https://github.com/grxnto/kamailio" target="_blank" rel="noopener noreferrer">
-            Kamaʻilio
-          </a> 
-          {" "}Audio Transcriber
+    <div className="font-mono flex flex-col items-center justify-center min-h-screen px-8 sm:px-8 min-w-[350px]">
+      <main className="justify-center">
+        <a className="block text-center hover:underline hover:underline-offset-4 text-6xl font-bold text-white" href="https://github.com/grxnto/kamailio" target="_blank" rel="noopener noreferrer">
+          Kamaʻilio
+        </a> 
+        <h1 className="flex text-3xl font-bold text-white justify-center">
+          Audio Transcriber
         </h1>         
         <AudioRecorder />
       </main>
