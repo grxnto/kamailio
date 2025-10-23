@@ -9,14 +9,14 @@ app = FastAPI()
 # Allow requests from your frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # for local testing, you can restrict later
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Load the Whisper model once
-model = whisper.load_model("base")  # you can use "small", "medium", "large" etc.
+model = whisper.load_model("base") 
 
 @app.post("/upload/")
 async def upload_audio(file: UploadFile = File(...)):

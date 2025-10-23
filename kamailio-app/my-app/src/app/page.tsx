@@ -11,14 +11,43 @@ import Image from "next/image";
           rel="noopener noreferrer"*/}
 
 import AudioRecorder from "./components/audio-recorder";
+import AnimatedText from "./components/animated-text";
 
 export default function Home() {
   return (
-    <div className="font-mono flex flex-col items-center justify-center min-h-screen px-8 sm:px-8 min-w-[350px]">
+    <div className="font-mono flex flex-col items-center justify-center min-h-screen min-w-[300px]">
+        {/* Header */}
+      <header className="w-full pt-6 flex justify-between items-center px-8">
+        <a className="hover:underline hover:underline-offset-4 flex pb-2 text-xl font-bold text-white justify-center" href="https://github.com/grxnto/kamailio" target="_blank" rel="noopener noreferrer"> Kamaʻilio</a> 
+        <nav className="flex gap-6 text-sm">
+          <a href="#about" className="hover:underline hover:underline-offset-4">Record</a>
+          <a href="#features" className="hover:underline hover:underline-offset-4">Upload</a>
+          <a href="#contact" className="hover:underline hover:underline-offset-4">About</a>
+        </nav>
+      </header>
+
+      {/* Hero Section */}
+      <section className="flex justify-center min-w-screen min-h-[500]">
+        <div className="absolute animate-spin-slow">
+          <AnimatedText animationSpeed={30}/>
+        </div>
+        
+        {/* Center image */}
+        <div className="relative z-10 mt-25">
+          <Image
+            src="/ilio.png" 
+            alt="ʻīlio"
+            width={180}          
+            height={180}
+            className="rounded-full object-cover"
+          />
+        </div>
+      </section>
+
+
+
+        {/* App Section */}
       <main className="justify-center">
-        <a className="block text-center hover:underline hover:underline-offset-4 text-6xl font-bold text-white" href="https://github.com/grxnto/kamailio" target="_blank" rel="noopener noreferrer">
-          Kamaʻilio
-        </a> 
         <h1 className="flex text-3xl font-bold text-white justify-center">
           Audio Transcriber
         </h1>         
