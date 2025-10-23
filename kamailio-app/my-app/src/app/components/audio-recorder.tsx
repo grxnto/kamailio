@@ -40,20 +40,62 @@ export default function AudioRecorder() {
     setRecording(false);
   };
 
+
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files?.[0]) return;
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("http://localhost:8000/upload/", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    setTranscript((prev) => prev + "\n" + data.transcription);
+  };
+  const buttonClasses = 'rounded-lg border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#54a192] dark:hover:bg-[#5ea7a8] hover:border-transparent  font-small text-sm h-15 px-4 pt-4 pb-4 cursor-pointer';
   return (
+
+
+
+
+
+
     <div className="flex flex-col items-center gap-10 pt-10">
-      <button
-        onClick={recording ? stopRecording : startRecording}
-        className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px] pt-8 pb-8"
-      >
-        {recording ? "Stop Recording" : "Start Recording"}
-      </button>
+      <div className="flex gap-x-4">
+        
+
+        <button
+          onClick={recording ? stopRecording : startRecording}
+          className={buttonClasses}
+        >
+          {recording ? "Stop Recording" : "Start Recording"}
+        </button>
+        <input
+          type="file"
+          id="file-upload"
+          accept="audio/*"
+          onChange={handleFileUpload}
+          className="hidden"
+        />
+
+        {/* Custom button */}
+        <label
+          htmlFor="file-upload"
+          className={buttonClasses}
+        >
+          Upload File
+        </label>
+      </div>
       <textarea
         value={transcript}
         readOnly
         rows={10}
         cols={50}
-        className="border p-2 w-full max-w-xl sm:min-w-[300px]"
+        className="border p-2 w-full max-w-xl"
       />
     </div>
   );
