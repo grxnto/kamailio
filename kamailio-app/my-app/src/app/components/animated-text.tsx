@@ -1,5 +1,8 @@
 "use client";
 import React, { useEffect, useRef } from "react";
+import { Inter} from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 interface AnimatedTextProps {
   text?: string;
@@ -27,8 +30,8 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
   const circlePathRef = useRef<SVGPathElement | null>(null);
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const fontFamily =
-    "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+  const fontFamily = `${inter.style.fontFamily}, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`;
+
 
   useEffect(() => {
     updateCirclePath();
