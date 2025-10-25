@@ -48,3 +48,8 @@ MT Metrics (COMET/BLEU) – evaluate translation quality.
     e. Demo with at least 3 English podcast episodes.
 6. Evaluation
 
+## Running the app locally
+1. Start the virtual environment for the backend (enter kamailio-backend/src) and use command:
+    uvicorn transcription:app --reload
+2. Start another terminal to load the frontend (enter kamailio-app/my-app) and use command:
+    npm run dev

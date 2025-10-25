@@ -1,4 +1,4 @@
-import Image from "next/image";
+"use client";
 
 {/*"font-mono list-inside list-decimal text-sm/6 text-center sm:text-left" 
   "bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded"
@@ -12,6 +12,11 @@ import Image from "next/image";
 
 import AudioRecorder from "./components/audio-recorder";
 import AnimatedText from "./components/animated-text";
+import PageIntro from "./components/page-intro";
+import Image from "next/image";
+import { Inter} from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
@@ -27,7 +32,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="flex justify-center min-w-screen min-h-[500]">
+      <section className="font-inter flex justify-center min-w-screen min-h-[500]">
         <div className="absolute animate-spin-slow">
           <AnimatedText animationSpeed={30}/>
         </div>
