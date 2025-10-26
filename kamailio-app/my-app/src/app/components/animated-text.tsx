@@ -20,7 +20,7 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
   text = "Q&A Experience — Live Audio Transcription — Record, Upload, Transcribe — Kama'ilio — Timestamp Capture and Summary —",
   noRepeat = false,
   animate = true,
-  circleSize = 166,
+  circleSize = 175,
   wordSpacing = 0,
   letterSpacing = 1,
   animationSpeed = 10,
@@ -30,8 +30,8 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
   const circlePathRef = useRef<SVGPathElement | null>(null);
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const fontFamily = `${inter.style.fontFamily}, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`;
-
+  const fontFamily =
+    "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
   useEffect(() => {
     updateCirclePath();

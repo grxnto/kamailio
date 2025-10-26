@@ -1,50 +1,67 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { motion, useAnimation, useInView } from "framer-motion";
 
 interface TypeFillOnScrollProps {
   text: string;
   className?: string;
-  durationPerLetter?: number;
 }
 
-export default function TypeFillOnScroll({
-  text,
-  className,
-  durationPerLetter = 50,
-}: TypeFillOnScrollProps) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const isInView = useInView(ref, { once: false, amount: 0.3 });
-  const controls = useAnimation();
-  const [letters, setLetters] = useState<string[]>([]);
+function TypeFillOnScroll({ text, className = "" }: TypeFillOnScrollProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [fillProgress, setFillProgress] = useState(0);
 
   useEffect(() => {
-    setLetters(text.split(""));
-  }, [text]);
+    const handleScroll = () => {
+      if (!ref.current) return;
 
-  useEffect(() => {
-    if (isInView) {
-      // Animate letters sequentially
-      controls.start((i) => ({
-        color: "#ffffff",
-        transition: { delay: i * (durationPerLetter / 1000), duration: 0.3 },
-      }));
-    }
-  }, [isInView, controls, durationPerLetter]);
+      const rect = ref.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Only start animation when element reaches middle of viewport
+      // Complete when it reaches top third
+      const start = windowHeight * 0.7; // Middle of screen
+      const end = windowHeight * 0.4;   // Upper third
+      const current = rect.top;
+      
+      let progress = 0;
+      if (current <= start && current >= end) {
+        progress = 1 - (current - end) / (start - end);
+      } else if (current < end) {
+        progress = 1;
+      }
+      // If current > start, progress stays 0 (text stays grey)
+      
+      setFillProgress(Math.max(0, Math.min(1, progress)));
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
+
+  const letters = text.split("");
+  const filledCount = Math.floor(fillProgress * letters.length);
 
   return (
-    <div ref={ref} className={className} style={{ overflow: "hidden" }}>
+    <div ref={ref} className={className}>
       {letters.map((char, index) => (
-        <motion.span
+        <span
           key={index}
-          custom={index}
-          initial={{ color: "#888888" }}
-          animate={controls}
-          style={{ display: "inline-block" }}
+          style={{
+            color: index < filledCount ? "#ffffff" : "#888888",
+            transition: "color 0.1s ease-out",
+          }}
         >
-          {char}
-        </motion.span>
+          {char === " " ? "\u00A0" : char}
+        </span>
       ))}
     </div>
   );
 }
+
+export default TypeFillOnScroll;

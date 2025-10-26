@@ -21,10 +21,8 @@ export default function WaveformVisualizer({
       const rect = containerRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Start animation when element is 80% down the viewport
-      // Complete when it reaches 20% from top
-      const start = windowHeight * 0.6;
-      const end = windowHeight * 0.2;
+      const start = windowHeight;
+      const end = 0;
       const current = rect.top;
 
       let progress = 0;
@@ -53,7 +51,7 @@ export default function WaveformVisualizer({
 
     // Each bar activates progressively
     if (scrollProgress < normalizedIndex) {
-      return 0.2; // Inactive
+      return 0.2; // Inactive - taller so it's visible
     }
 
     // Create varied heights like real audio frequencies
