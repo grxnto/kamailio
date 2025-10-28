@@ -13,32 +13,57 @@
 import AudioRecorder from "./components/audio-recorder";
 import AnimatedText from "./components/animated-text";
 import PageIntro from "./components/page-intro";
+import Header from "./components/header";
+import Footer from "./components/footer";
+import TypeFillOnScroll from "./components/type-on-scroll";
+import WaveformVisualizer from "./components/waveform";
 import Image from "next/image";
-import { Inter} from "next/font/google";
+import { Inter } from "next/font/google";
+import { useEffect, useRef, useState } from 'react';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [isVisible, setIsVisible] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
+    if (mainRef.current) {
+      observer.observe(mainRef.current);
+    }
+
+    return () => {
+      if (mainRef.current) {
+        observer.unobserve(mainRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="font-mono flex flex-col items-center justify-center min-h-screen min-w-[300px]">
-        {/* Header */}
-      <header className="w-full pt-6 flex justify-between items-center px-8">
-        <a className="hover:underline hover:underline-offset-4 flex pb-2 text-xl font-bold text-white justify-center" href="https://github.com/grxnto/kamailio" target="_blank" rel="noopener noreferrer"> Kamaʻilio</a> 
-        <nav className="flex gap-6 text-sm">
-          <a href="#about" className="hover:underline hover:underline-offset-4">Record</a>
-          <a href="#features" className="hover:underline hover:underline-offset-4">Upload</a>
-          <a href="#contact" className="hover:underline hover:underline-offset-4">About</a>
-        </nav>
-      </header>
+       {/* Responsive Header */}
+      <Header />
 
       {/* Hero Section */}
-      <section className="font-inter flex justify-center min-w-screen min-h-[500]">
+      <section className="font-inter flex justify-center items-center min-w-screen min-h-[70vh] pt-10">
         <div className="absolute animate-spin-slow">
           <AnimatedText animationSpeed={30}/>
         </div>
         
         {/* Center image */}
-        <div className="relative z-10 mt-25">
+        <div className="relative z-5">
           <Image
             src="/ilio.png" 
             alt="ʻīlio"
@@ -49,15 +74,35 @@ export default function Home() {
         </div>
       </section>
 
-
+      {/* Animated Description */}
+      <section className="flex flex-col items-center justify-center min-w-screen min-h-[300px] gap-4">
+        <TypeFillOnScroll
+              text="Record live conversation and upload audio files"
+              className={`text-5xl font-bold ${inter.className}`}
+            />
+        <WaveformVisualizer
+          barCount={30}
+          className="mt-4"
+        />
+      </section>
 
         {/* App Section */}
-      <main className="justify-center">
+      <main 
+        ref={mainRef}
+        className={`justify-center min-h-[700px] transition-all duration-700 ease-out ${
+          isVisible 
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 translate-y-8'
+        }`}
+      >
         <h1 className="flex text-3xl font-bold text-white justify-center">
           Audio Transcriber
         </h1>         
         <AudioRecorder />
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

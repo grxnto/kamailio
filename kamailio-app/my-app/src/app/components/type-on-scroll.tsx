@@ -16,9 +16,6 @@ function TypeFillOnScroll({ text, className = "" }: TypeFillOnScrollProps) {
 
       const rect = ref.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      
-      // Only start animation when element reaches middle of viewport
-      // Complete when it reaches top third
       const start = windowHeight * 0.7; // Middle of screen
       const end = windowHeight * 0.4;   // Upper third
       const current = rect.top;

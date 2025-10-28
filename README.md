@@ -50,6 +50,6 @@ MT Metrics (COMET/BLEU) – evaluate translation quality.
 
 ## Running the app locally
 1. Start the virtual environment for the backend (enter kamailio-backend/src) and use command:
-    uvicorn transcription:app --reload
+    uvicorn transcription-app:app --reload
 2. Start another terminal to load the frontend (enter kamailio-app/my-app) and use command:
     npm run dev

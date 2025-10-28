@@ -15,7 +15,7 @@ export default function Footer() {
   return (
     <footer className="w-full text-white border-t border-white mt-auto">
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {/* Sitemap */}
           <div>
             <h3 className="text-sm font-semibold mb-4 text-gray-400">Site</h3>
