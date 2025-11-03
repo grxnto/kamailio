@@ -2,26 +2,46 @@
 
 export default function Footer() {
 
+  const scrollToRecorder = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    document.getElementById("recorder")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  };
+
   return (
-    <footer className="mt-50 w-full text-white border-t border-white mt-auto bg-[#0a0a0a]">
+    <footer className="mt-15 w-full text-white border-t border-white mt-auto bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          
           {/* Sitemap */}
           <div>
             <h3 className="text-sm font-semibold mb-4 text-gray-400">Site</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/about" className="hover:text-gray-300 transition-colors">
+                <a
+                  href="#recorder"
+                  onClick={scrollToRecorder}
+                  className="hover:text-gray-300 transition-colors"
+                >
                   Record
                 </a>
               </li>
               <li>
-                <a href="/features" className="hover:text-gray-300 transition-colors">
+                <a
+                  href="#recorder"
+                  onClick={scrollToRecorder}
+                  className="hover:text-gray-300 transition-colors"
+                >
                   Upload
                 </a>
               </li>
               <li>
-                <a href="/contact" className="hover:text-gray-300 transition-colors">
+                <a
+                  href="/contact"
+                  className="hover:text-gray-300 transition-colors"
+                >
                   Contact
                 </a>
               </li>
@@ -50,16 +70,26 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold mb-4 text-gray-400">Info</h3>
             <div className="space-y-2">
-                <p>
-                    <a href="https://github.com/grxnto" className="hover:text-gray-300 transition-colors">
-                        https://github.com/grxnto
-                    </a>
-                </p>
-                <p >
-                    <a href="www.linkedin.com/in/grant-lau" className="hover:text-gray-300 transition-colors">
-                        www.linkedin.com/in/grant-lau
-                    </a>
-                </p>
+              <p>
+                <a
+                  href="https://github.com/grxnto"
+                  className="hover:text-gray-300 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  https://github.com/grxnto
+                </a>
+              </p>
+              <p>
+                <a
+                  href="https://www.linkedin.com/in/grant-lau"
+                  className="hover:text-gray-300 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  www.linkedin.com/in/grant-lau
+                </a>
+              </p>
             </div>
           </div>
 

@@ -206,23 +206,33 @@ export default function AudioRecorder() {
         {transcription ? (
           <>
             {/* Full Text */}
-            <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-semibold text-white">Transcription</h3>
+            <div className="px-4 pb-4 bg-[#161616] rounded-lg border border-white/10 max-h-96 overflow-y-auto">
+              {/* Transcription Header */}
+              <div className="sticky top-0 z-0 bg-[#161616] flex justify-between items-center pb-1 mb-2">
+                <h3 className="pt-4 text-lg sticky font-semibold text-white pb-1 bg-[#161616]">
+                  Transcription
+                </h3>
                 <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">
                   {transcription.language}
                 </span>
               </div>
+
+              {/* Transcription Box */}
               <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
                 {transcription.text}
               </p>
             </div>
 
             {/* Timestamped Segments */}
-            <div className="p-4 bg-white/5 rounded-lg border border-white/10 max-h-96 overflow-y-auto">
-              <h3 className="text-lg font-semibold mb-3 text-white sticky top-0 bg-inherit pb-2">
-                Timestamped Segments
-              </h3>
+            <div className="mb-20 px-4 pb-4 bg-[#161616] rounded-lg border border-white/10 max-h-96 overflow-y-auto">
+              <div className="sticky top-0 z-0 bg-[#161616] flex justify-between items-center pb-1 mb-2">
+                <h3 className="pt-4 text-lg sticky font-semibold text-white pb-1 bg-[#161616]">
+                  Timestamped Segments
+                </h3>
+                <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">
+                  {transcription.language}
+                </span>
+              </div>
               <div className="space-y-3">
                 {transcription.segments.map((segment, index) => (
                   <div 

@@ -7,6 +7,15 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const scrollToRecorder = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    document.getElementById('recorder')?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  };
+
   return (
     <header className="sm:w-[90%] w-full pt-8 sm:px-8 flex flex-col px-6">
       {/* Top bar */}
@@ -23,9 +32,28 @@ export default function Header() {
 
         {/* Desktop navigation */}
         <nav className="hidden sm:flex gap-6 text-sm">
-          <a href="#about" className="hover:underline hover:underline-offset-4">Record</a>
-          <a href="#features" className="hover:underline hover:underline-offset-4">Upload</a>
-          <a href="#contact" className="hover:underline hover:underline-offset-4">About</a>
+          <a 
+            href="#recorder" 
+            onClick={scrollToRecorder}
+            className="hover:underline hover:underline-offset-4 cursor-pointer"
+          >
+            Record
+          </a>
+          <a 
+            href="#recorder" 
+            onClick={scrollToRecorder}
+            className="hover:underline hover:underline-offset-4 cursor-pointer"
+          >
+            Upload
+          </a>
+          <a 
+            href="https://github.com/grxnto/kamailio" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline hover:underline-offset-4"
+          >
+            About
+          </a>
         </nav>
 
         {/* Mobile menu button */}
@@ -49,21 +77,23 @@ export default function Header() {
             className="sm:hidden origin-top overflow-hidden flex flex-col gap-2 mt-2 bg-gray-800 text-white rounded-md p-3"
           >
             <a
-              href="#about"
-              className="hover:underline hover:underline-offset-4"
-              onClick={() => setMenuOpen(false)}
+              href="#recorder"
+              onClick={scrollToRecorder}
+              className="hover:underline hover:underline-offset-4 cursor-pointer"
             >
               Record
             </a>
             <a
-              href="#features"
-              className="hover:underline hover:underline-offset-4"
-              onClick={() => setMenuOpen(false)}
+              href="#recorder"
+              onClick={scrollToRecorder}
+              className="hover:underline hover:underline-offset-4 cursor-pointer"
             >
               Upload
             </a>
             <a
-              href="#contact"
+              href="https://github.com/grxnto/kamailio"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:underline hover:underline-offset-4"
               onClick={() => setMenuOpen(false)}
             >
