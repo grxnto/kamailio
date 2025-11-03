@@ -130,7 +130,7 @@ export default function AudioRecorder() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 p-6 max-w-4xl mx-auto">
+    <div className="flex flex-col items-center gap-10 p-6 max-w-4xl mx-auto">
       {/* Control Buttons */}
       <div className="flex gap-4 items-center">
         {/* Record Button */}

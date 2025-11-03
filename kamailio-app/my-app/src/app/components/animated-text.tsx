@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { Inter} from "next/font/google";
+import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({ 
+  weight: ['400', '500', '700'],
+  subsets: ["latin"] 
+});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,8 +36,7 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
   const circlePathRef = useRef<SVGPathElement | null>(null);
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const fontFamily =
-    "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+  const fontFamily = roboto.style.fontFamily;
 
   useEffect(() => {
     updateCirclePath();
