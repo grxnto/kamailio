@@ -16,8 +16,8 @@ function TypeFillOnScroll({ text, className = "" }: TypeFillOnScrollProps) {
 
       const rect = ref.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const start = windowHeight * 0.7; // Middle of screen
-      const end = windowHeight * 0.4;   // Upper third
+      const start = windowHeight * 0.8; // Middle of screen
+      const end = windowHeight * 0.15;   // Upper third
       const current = rect.top;
       
       let progress = 0;
@@ -50,7 +50,7 @@ function TypeFillOnScroll({ text, className = "" }: TypeFillOnScrollProps) {
         <span
           key={index}
           style={{
-            color: index < filledCount ? "#ffffff" : "#888888",
+            color: index < filledCount ? "#ffffff" : "#343434ff",
             transition: "color 0.1s ease-out",
           }}
         >

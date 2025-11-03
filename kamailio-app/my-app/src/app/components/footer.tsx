@@ -1,19 +1,9 @@
 "use client";
-import { useState } from "react";
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-
-  const handleSubscribe = () => {
-    if (email) {
-      console.log("Subscribing:", email);
-      // Add your newsletter subscription logic here
-      setEmail("");
-    }
-  };
 
   return (
-    <footer className="w-full text-white border-t border-white mt-auto">
+    <footer className="w-full text-white border-t border-white mt-auto bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {/* Sitemap */}
