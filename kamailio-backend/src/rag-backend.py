@@ -122,7 +122,7 @@ Instructions:
 
 Summary:"""
         else:
-            prompt = f"""You are a helpful assistant answering questions about a transcript. Use the transcript segments below to answer the question accurately and in detail. Always cite timestamps when referencing specific information.
+            prompt = f"""You are a helpful assistant answering questions about a transcript. Use the transcript segments below to answer the question accurately and in detail.
 
 Transcript Segments:
 {context}
@@ -131,9 +131,9 @@ Question: {question}
 
 Instructions:
 - Answer the question thoroughly with specific details
-- Reference timestamps for key information
-- If the segments don't fully answer the question, say so
-- Be detailed and informative
+- Answer concisely but include key facts
+- Avoid long explanations unless specifically asked
+- Reference timestamps only for critical information
 
 Answer:"""
         
@@ -149,12 +149,12 @@ Answer:"""
                     "stream": False,
                     "options": {
                         "temperature": 0.7,
-                        "num_predict": 800,  # Increased from 300 to allow longer responses
+                        "num_predict": 700,  # Increased from 300 to allow longer responses
                         "top_p": 0.9,
                         "num_ctx": 4096  # Larger context window
                     }
                 },
-                timeout=120  # Increased timeout for longer responses
+                timeout=90  # Increased timeout for longer responses
             )
             
             if response.status_code == 200:
