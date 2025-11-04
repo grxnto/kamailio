@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import TranscriptQA from './q-and-a'; // Import the new component
 
 interface TranscriptSegment {
   start: number;
@@ -15,6 +16,7 @@ interface TranscriptionResult {
 }
 
 export default function AudioRecorder() {
+  const [copied, setCopied] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [transcription, setTranscription] = useState<TranscriptionResult | null>(null);
@@ -56,7 +58,6 @@ export default function AudioRecorder() {
       setError(null);
       setRecordingTime(0);
 
-      // Start timer
       timerRef.current = setInterval(() => {
         setRecordingTime(prev => prev + 1);
       }, 1000);
@@ -133,7 +134,6 @@ export default function AudioRecorder() {
     <div className="flex flex-col items-center gap-10 p-6 max-w-4xl mx-auto">
       {/* Control Buttons */}
       <div className="flex gap-4 items-center">
-        {/* Record Button */}
         <button
           onClick={handleRecordClick}
           disabled={isUploading}
@@ -160,7 +160,6 @@ export default function AudioRecorder() {
           )}
         </button>
 
-        {/* Upload Button */}
         <input
           ref={fileInputRef}
           type="file"
@@ -201,54 +200,53 @@ export default function AudioRecorder() {
         </div>
       )}
 
-      {/* Transcription Text Box */}
+      {/* Transcription Results */}
       <div className="w-full space-y-4">
         {transcription ? (
           <>
             {/* Full Text */}
             <div className="px-4 pb-4 bg-[#161616] rounded-lg border border-white/10 max-h-96 overflow-y-auto">
-              {/* Transcription Header */}
               <div className="sticky top-0 z-0 bg-[#161616] flex justify-between items-center pb-1 mb-2">
                 <h3 className="pt-4 text-lg sticky font-semibold text-white pb-1 bg-[#161616]">
                   Transcription
                 </h3>
-                <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">
-                  {transcription.language}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">
+                    {transcription.language}
+                  </span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(transcription.text);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1 transition-colors"
+                  >
+                    {copied ? (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
-
-              {/* Transcription Box */}
               <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
                 {transcription.text}
               </p>
             </div>
 
-            {/* Timestamped Segments */}
-            <div className="mb-20 px-4 pb-4 bg-[#161616] rounded-lg border border-white/10 max-h-96 overflow-y-auto">
-              <div className="sticky top-0 z-0 bg-[#161616] flex justify-between items-center pb-1 mb-2">
-                <h3 className="pt-4 text-lg sticky font-semibold text-white pb-1 bg-[#161616]">
-                  Timestamped Segments
-                </h3>
-                <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">
-                  {transcription.language}
-                </span>
-              </div>
-              <div className="space-y-3">
-                {transcription.segments.map((segment, index) => (
-                  <div 
-                    key={index} 
-                    className="flex gap-3 p-2 hover:bg-white/5 rounded transition-colors"
-                  >
-                    <span className="text-xs font-mono text-blue-400 whitespace-nowrap min-w-[80px]">
-                      {formatTime(segment.start)} - {formatTime(segment.end)}
-                    </span>
-                    <p className="text-sm text-gray-300 leading-relaxed">
-                      {segment.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+
+            {/* Q&A Component - NEW! */}
+            <TranscriptQA transcription={transcription} />
           </>
         ) : (
           <div className="w-full p-12 border-2 border-dashed border-white/10 rounded-lg text-center">
