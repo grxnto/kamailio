@@ -205,7 +205,7 @@ export default function AudioRecorder() {
         {transcription ? (
           <>
             {/* Full Text */}
-            <div className="px-4 pb-4 bg-[#161616] rounded-lg border border-white/10 max-h-96 overflow-y-auto">
+            <div className="px-4 pb-4 mb-10 bg-[#161616] rounded-lg border border-white/10 max-h-96 overflow-y-auto">
               <div className="sticky top-0 z-0 bg-[#161616] flex justify-between items-center pb-1 mb-2">
                 <h3 className="pt-4 text-lg sticky font-semibold text-white pb-1 bg-[#161616]">
                   Transcription
@@ -220,7 +220,7 @@ export default function AudioRecorder() {
                       setCopied(true);
                       setTimeout(() => setCopied(false), 2000);
                     }}
-                    className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1 transition-colors"
+                    className="hover:cursor-pointer px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1 transition-colors"
                   >
                     {copied ? (
                       <>

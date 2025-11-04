@@ -32,22 +32,33 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const qaContainerRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+  
+  useEffect(() => {
+    if (qaMode) {
+        qaContainerRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+        });
+    }
+    }, [qaMode, question]);
 
   useEffect(() => {
     if (messages.length > 0 && qaMode) {
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [messages, qaMode]);
 
   const handleStartQA = () => {
     setQaMode(true);
-    setShowTranscript(false); // Auto-collapse when entering Q&A
+    setShowTranscript(false);
   };
 
   const handleExitQA = () => {
@@ -65,46 +76,63 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
   const handleSendQuestion = async () => {
     if (!question.trim()) return;
 
+    const container = messagesContainerRef.current;
+
+    const isAtBottom =
+        container
+        ? container.scrollHeight - container.scrollTop - container.clientHeight < 20
+        : true;
+
     const userMessage: Message = { role: 'user', content: question };
     setMessages(prev => [...prev, userMessage]);
     setQuestion('');
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual RAG implementation
-      const response = await fetch('http://localhost:8000/api/qa', {
+        const response = await fetch('http://localhost:8000/api/qa', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          question: question,
-          transcript: transcription.text,
-          segments: transcription.segments,
+            question: question,
+            transcript: transcription.text,
+            segments: transcription.segments,
         }),
-      });
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to get answer');
-      }
+        if (!response.ok) throw new Error('Failed to get answer');
 
-      const data = await response.json();
-      const assistantMessage: Message = {
-        role: 'assistant',
-        content: data.answer,
-      };
-      setMessages(prev => [...prev, assistantMessage]);
+        const data = await response.json();
+        const assistantMessage: Message = { role: 'assistant', content: data.answer };
+
+        setMessages(prev => [...prev, assistantMessage]);
+
+        if (container && isAtBottom) {
+        setTimeout(() => {
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+        }, 50);
+        }
     } catch (err) {
-      // Fallback mock response for demo
-      const mockResponse: Message = {
+        const mockResponse: Message = {
         role: 'assistant',
-        content: `Based on the transcript: ${question.toLowerCase().includes('what') ? 'The transcript discusses various topics. Could you be more specific?' : 'I found relevant information in the transcript that addresses your question.'}`,
-      };
-      setMessages(prev => [...prev, mockResponse]);
+        content: `Based on the transcript: ${
+            question.toLowerCase().includes('what')
+            ? 'The transcript discusses various topics. Could you be more specific?'
+            : 'I found relevant information in the transcript that addresses your question.'
+        }`,
+        };
+
+        setMessages(prev => [...prev, mockResponse]);
+
+        if (container && isAtBottom) {
+        setTimeout(() => {
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+        }, 50);
+        }
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+    };
+
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -132,13 +160,13 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
               </span>
               <button
                 onClick={handleCopyTranscript}
-                className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1 transition-colors"
+                className="hover:cursor-pointer px-2 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1 transition-colors"
               >
                 {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
               </button>
               <button
                 onClick={handleStartQA}
-                className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1.5 transition-colors border border-white/10"
+                className="hover:cursor-pointer px-3 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1.5 transition-colors border border-white/10"
               >
                 <MessageSquare className="w-3 h-3" />
                 Start Q&A
@@ -147,7 +175,7 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
           ) : (
             <button
               onClick={handleExitQA}
-              className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1.5 transition-colors border border-white/10"
+              className="hover:cursor-pointer px-3 py-1 bg-white/5 hover:bg-white/10 rounded text-xs flex items-center gap-1.5 transition-colors border border-white/10"
             >
               <X className="w-3 h-3" />
               Exit Q&A
@@ -161,7 +189,7 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
         <div className="border-b border-white/10 mb-3">
           <button
             onClick={() => setShowTranscript(!showTranscript)}
-            className="w-full py-2 flex items-center justify-between hover:bg-white/5 rounded transition-colors px-2"
+            className="w-full py-2 flex items-center justify-between hover:bg-white/5 rounded transition-colors px-2 hover:cursor-pointer"
           >
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-300">View Transcript</span>
@@ -174,7 +202,7 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
 
           <div
             className={`overflow-hidden transition-all duration-300 ${
-              showTranscript ? 'max-h-48 pb-3' : 'max-h-0'
+              showTranscript ? 'max-h-24 pb-3' : 'max-h-0'
             }`}
           >
             <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -211,33 +239,31 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
         </div>
       ) : (
         // Q&A Mode: Show Chat Interface
-        <div className="animate-fadeIn">
-          <div 
+        <div ref={qaContainerRef} className="animate-fadeIn ">
+          <div
+            ref={messagesContainerRef} 
             className="space-y-3 mb-3 overflow-y-auto"
-            style={{ height: '400px' }}
+            style={{ height: '500px' }}
           >
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-500">
                 <MessageSquare className="w-12 h-12 mb-3 opacity-50" />
-                <p className="text-sm">Ask questions about the transcription</p>
+                <p className="text-sm">Ask a question or request a summary</p>
               </div>
             ) : (
               <>
                 {messages.map((msg, idx) => (
                   <div
                     key={idx}
-                    className={`flex animate-slideIn ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex pr-5 animate-slideIn ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 ${
+                      className={`max-w-[80%] mb-3 rounded-md p-3 ${
                         msg.role === 'user'
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-blue-400/5 text-white border border-white/10'
                           : 'bg-white/5 text-gray-300 border border-white/10'
                       }`}
                     >
-                      <p className="text-xs font-medium mb-1 opacity-70">
-                        {msg.role === 'user' ? 'You' : 'Assistant'}
-                      </p>
                       <p className="text-sm leading-relaxed">{msg.content}</p>
                     </div>
                   </div>
@@ -254,7 +280,7 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
                     </div>
                   </div>
                 )}
-                <div ref={chatEndRef} />
+                <div />
               </>
             )}
           </div>
@@ -265,15 +291,16 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
               <input
                 type="text"
                 value={question}
+                onKeyDown={handleKeyPress}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Type your question..."
+                placeholder="Type your query here..."
                 className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
                 disabled={isLoading}
               />
               <button
                 onClick={handleSendQuestion}
                 disabled={isLoading || !question.trim()}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded flex items-center gap-2 transition-colors"
+                className="hover:cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded flex items-center gap-2 transition-colors"
               >
                 <Send className="w-4 h-4" />
                 <span className="text-sm">Send</span>
