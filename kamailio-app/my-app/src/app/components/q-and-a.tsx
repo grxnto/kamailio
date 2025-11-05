@@ -24,6 +24,96 @@ interface TranscriptQAProps {
   transcription: TranscriptionResult;
 }
 
+// Markdown parser component
+const MarkdownContent = ({ content }: { content: string }) => {
+  const parseMarkdown = (text: string) => {
+    const lines = text.split('\n');
+    const elements: JSX.Element[] = [];
+    let listItems: string[] = [];
+    let listKey = 0;
+
+    const flushList = () => {
+      if (listItems.length > 0) {
+        elements.push(
+          <ul key={`list-${listKey++}`} className="list-none space-y-2 my-3 pl-0">
+            {listItems.map((item, idx) => (
+              <li key={idx} className="flex gap-2 leading-relaxed">
+                <span className="text-gray-400 mt-1">•</span>
+                <span dangerouslySetInnerHTML={{ __html: parseBold(item) }} />
+              </li>
+            ))}
+          </ul>
+        );
+        listItems = [];
+      }
+    };
+
+    const parseBold = (text: string) => {
+      return text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>');
+    };
+
+    lines.forEach((line, idx) => {
+      // Handle headers (##, ###, etc.)
+      if (line.startsWith('### ')) {
+        flushList();
+        elements.push(
+          <h3 key={idx} className="text-base font-semibold text-white mt-4 mb-2">
+            {line.replace('### ', '')}
+          </h3>
+        );
+      } else if (line.startsWith('## ')) {
+        flushList();
+        elements.push(
+          <h2 key={idx} className="text-lg font-semibold text-white mt-4 mb-2">
+            {line.replace('## ', '')}
+          </h2>
+        );
+      } else if (line.startsWith('# ')) {
+        flushList();
+        elements.push(
+          <h1 key={idx} className="text-xl font-bold text-white mt-4 mb-3">
+            {line.replace('# ', '')}
+          </h1>
+        );
+      }
+      // Handle bullet points
+      else if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
+        listItems.push(line.trim().substring(2));
+      }
+      // Handle numbered lists
+      else if (/^\d+\.\s/.test(line.trim())) {
+        flushList();
+        const match = line.trim().match(/^\d+\.\s(.+)/);
+        if (match) {
+          elements.push(
+            <div key={idx} className="flex gap-2 my-2 leading-relaxed">
+              <span className="text-gray-400 font-medium">{line.trim().match(/^\d+/)?.[0]}.</span>
+              <span dangerouslySetInnerHTML={{ __html: parseBold(match[1]) }} />
+            </div>
+          );
+        }
+      }
+      // Handle empty lines
+      else if (line.trim() === '') {
+        flushList();
+        elements.push(<div key={idx} className="h-2" />);
+      }
+      // Handle regular text with bold
+      else if (line.trim()) {
+        flushList();
+        elements.push(
+          <p key={idx} className="leading-relaxed my-2" dangerouslySetInnerHTML={{ __html: parseBold(line) }} />
+        );
+      }
+    });
+
+    flushList();
+    return elements;
+  };
+
+  return <div className="text-sm text-gray-300">{parseMarkdown(content)}</div>;
+};
+
 export default function TranscriptQA({ transcription }: TranscriptQAProps) {
   const [qaMode, setQaMode] = useState(false);
   const [showTranscript, setShowTranscript] = useState(true);
@@ -89,7 +179,7 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
     setIsLoading(true);
 
     try {
-        const response = await fetch('http://localhost:8000/api/qa', {
+        const response = await fetch('http://localhost:8001/api/qa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -264,7 +354,11 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
                           : 'bg-white/5 text-gray-300 border border-white/10'
                       }`}
                     >
-                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                      {msg.role === 'assistant' ? (
+                        <MarkdownContent content={msg.content} />
+                      ) : (
+                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                      )}
                     </div>
                   </div>
                 ))}

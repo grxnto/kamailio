@@ -1,22 +1,12 @@
 "use client";
 
-{/*"font-mono list-inside list-decimal text-sm/6 text-center sm:text-left" 
-  "bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded"
-  "rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-  "rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-  */}
-{/*className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"*/}
-
 import AudioRecorder from "./components/audio-recorder";
-import AnimatedText from "./components/animated-text";
-import PageIntro from "./components/page-intro";
+import CircularText from "./components/circular-text";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import TypeFillOnScroll from "./components/type-on-scroll";
 import WaveformVisualizer from "./components/waveform";
+import Particles from './components/particles';
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { useEffect, useRef, useState } from 'react';
@@ -52,57 +42,85 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="font-mono flex flex-col items-center justify-center min-h-screen min-w-[300px]">
-       {/* Responsive Header */}
-      <Header />
+    <>
+      {/* Particles Background - Fixed behind everything */}
+      <div className="fixed inset-0 min-w-screen max-w-screen overflow-x-hidden min-h-screen z-0 pointer-events-none">
+        <Particles
+          particleColors={['#f3f3f3ff']}
+          particleCount={300}
+          particleSpread={10}
+          speed={0.05}
+          particleBaseSize={80}
+          moveParticlesOnHover={false}
+          alphaParticles={false}
+        />
+      </div>
 
-      {/* Hero Section */}
-      <section className="font-inter flex justify-center items-center min-w-screen min-h-[70vh] pt-10">
-        <div className="absolute animate-spin-slow">
-          <AnimatedText animationSpeed={30}/>
-        </div>
-        
-        {/* Center image */}
-        <div className="relative z-5">
-          <Image
-            src="/ilio.png" 
-            alt="ʻīlio"
-            width={180}          
-            height={180}
-            className="rounded-full object-cover"
-          />
-        </div>
-      </section>
+      {/* Main content */}
+      <div className="font-mono flex flex-col items-center justify-center min-h-screen min-w-[300px] relative z-10">
+        {/* Responsive Header */}
+        <Header />
 
-      {/* Animated Description */}
-      <section className="flex flex-col items-center justify-center min-w-screen min-h-[300px] gap-4">
-        <TypeFillOnScroll
+        {/* Hero Section */}
+        <section className="font-inter flex justify-center items-center min-w-screen min-h-[70vh] pt-10">
+          <div className="absolute">
+            <CircularText 
+              text="Q&A EXPERIENCE • LIVE AUDIO TRANSCRIPTION • "
+              spinDuration={60}
+              onHover="speedUp"
+            />
+          </div>
+          
+          {/* Center image */}
+          <div className="relative z-5">
+            <Image
+              src="/ilio.png" 
+              alt="ʻīlio"
+              width={180}          
+              height={180}
+              className="rounded-full object-cover"
+            />
+          </div>
+        </section>
+
+        {/* Animated Description */}
+        <section className="flex flex-col items-center justify-center min-w-screen sm:min-h-[250px] gap-4 mb-20 sm:mb-5">
+          {/* fancy desktop */}
+          <div className="hidden xl:flex flex-col items-center">
+            <TypeFillOnScroll
               text="Record live conversation and upload audio files"
               className={`text-5xl font-bold ${inter.className}`}
             />
-        <WaveformVisualizer
-          barCount={30}
-          className="mt-4"
-        />
-      </section>
+            <WaveformVisualizer barCount={30} className="mt-4" />
+          </div>
+
+          {/* mobile fallback */}
+          <p className={`text-3xl xl:hidden  text-left mx-6 font-bold ${inter.className}`}>
+            Record live conversation and upload audio files
+          </p>
+          <p className={`text-sm xl:hidden text-left mx-6 text-gray-400 ${inter.className}`}>
+            After transcribing your audio, export the text for LLM Q&A functionality
+          </p>
+        </section>
 
         {/* App Section */}
-      <main 
-        ref={mainRef}
-        className={`justify-center min-h-[700px] transition-all duration-700 ease-out ${
-          isVisible 
-            ? 'opacity-100 translate-y-0' 
-            : 'opacity-0 translate-y-8'
-        }`}
-      >
-        <h1 className="flex text-3xl font-bold text-white justify-center">
-          Audio Transcriber
-        </h1>         
-        <AudioRecorder />
-      </main>
+        <main 
+          ref={mainRef}
+          id="recorder"
+          className={`justify-center min-h-[700px] transition-all duration-700 ease-out ${
+            isVisible 
+              ? 'opacity-100 translate-y-0' 
+              : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <AudioRecorder />
+        </main>
 
-      {/* Footer */}
-      <Footer />
-    </div>
+        {/* Footer */}
+        <div className="bg-black w-full">
+          <Footer />
+        </div>
+      </div>
+    </>
   );
 }

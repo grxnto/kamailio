@@ -50,6 +50,9 @@ MT Metrics (COMET/BLEU) – evaluate translation quality.
 
 ## Running the app locally
 1. Start the virtual environment for the backend (enter kamailio-backend/src) and use command:
-    uvicorn transcription-app:app --reload
+    uvicorn app-transcription:app --reload
 2. Start another terminal to load the frontend (enter kamailio-app/my-app) and use command:
     npm run dev
+3. Start a third terminal for the local model and use command (could use // ollama pull llama3.1 for better model), enter kamailio-backend/src and use commands:
+    ollama serve
+    python3 rag-backend.py

@@ -106,19 +106,22 @@ class RAGSystem:
         is_summary = any(word in question.lower() for word in ['summary', 'summarize', 'overview', 'main points', 'key points'])
         
         if is_summary:
-            prompt = f"""You are analyzing a podcast transcript. Provide a comprehensive summary that covers all the main topics, key points, and important details discussed.
+            prompt = f"""Analyze this transcript and provide a comprehensive summary of key details and events covered.
 
-Transcript Segments:
+Transcript:
 {context}
 
 Question: {question}
 
 Instructions:
-- Provide a detailed summary covering all major topics
-- Include specific facts, names, and events mentioned
-- Organize by topic or theme
-- Use timestamps to reference specific moments
-- Be thorough and informative
+- List specific details with names, numbers, locations, outcomes
+- Focus on WHAT happened, WHO was involved, and KEY facts
+- Omit meta-commentary about the broadcast format or correspondents
+- Do not use markdown formatting
+- Be thorough but avoid repetition
+- Use normal text formatting
+
+Provide a factual summary of the transcript.
 
 Summary:"""
         else:
@@ -130,10 +133,10 @@ Transcript Segments:
 Question: {question}
 
 Instructions:
-- Answer the question thoroughly with specific details
 - Answer concisely but include key facts
 - Avoid long explanations unless specifically asked
 - Reference timestamps only for critical information
+- Do not use markdown formatting
 
 Answer:"""
         
@@ -154,7 +157,7 @@ Answer:"""
                         "num_ctx": 4096  # Larger context window
                     }
                 },
-                timeout=90  # Increased timeout for longer responses
+                timeout=60 
             )
             
             if response.status_code == 200:

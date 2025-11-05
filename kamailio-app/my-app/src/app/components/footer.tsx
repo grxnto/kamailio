@@ -42,7 +42,7 @@ export default function Footer() {
                   href="/contact"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  Contact
+                  About
                 </a>
               </li>
             </ul>
@@ -53,13 +53,9 @@ export default function Footer() {
             <h3 className="text-sm font-semibold mb-4 text-gray-400">Contact</h3>
             <div className="space-y-2">
               <p>Grant Lau</p>
+
               <p>
-                <a href="tel:+1234567890" className="hover:text-gray-300 transition-colors">
-                  +1 808 859 8747
-                </a>
-              </p>
-              <p>
-                <a href="grant@purplemaia.org" className="hover:text-gray-300 transition-colors">
+                <a href="grant@purplemaia.org" className="hover:text-gray-300 hover:underline hover:underline-offset-4 transition-colors">
                   grant@purplemaia.org
                 </a>
               </p>
@@ -73,21 +69,20 @@ export default function Footer() {
               <p>
                 <a
                   href="https://github.com/grxnto"
-                  className="hover:text-gray-300 transition-colors"
+                  className="hover:text-gray-300 hover:underline hover:underline-offset-4 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  https://github.com/grxnto
+                  Github
                 </a>
               </p>
               <p>
                 <a
-                  href="https://www.linkedin.com/in/grant-lau"
-                  className="hover:text-gray-300 transition-colors"
+                  href="https://purplemaia.org/"
+                  className="hover:text-gray-300 hover:underline hover:underline-offset-4 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
-                >
-                  www.linkedin.com/in/grant-lau
+                > Purple Maiʻa
                 </a>
               </p>
             </div>
