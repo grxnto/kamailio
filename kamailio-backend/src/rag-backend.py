@@ -253,7 +253,6 @@ async def root():
 if __name__ == "__main__":
     import uvicorn
     
-    # Use port 8001 to avoid conflict with transcription server
     port = 8001
     
     print("\n" + "="*50)

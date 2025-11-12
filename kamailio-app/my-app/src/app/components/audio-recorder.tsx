@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from 'react';
-import TranscriptQA from './q-and-a'; // Import the new component
+import TranscriptQA from './q-and-a';
 
 interface TranscriptSegment {
   start: number;

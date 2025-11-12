@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { MessageSquare, X, ChevronDown, ChevronUp, Send, Copy, Check } from 'lucide-react';
 
 interface TranscriptSegment {
@@ -133,18 +133,32 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
   
   useEffect(() => {
     if (qaMode) {
-        qaContainerRef.current?.scrollIntoView({
+      qaContainerRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
-        });
+      });
     }
-    }, [qaMode, question]);
+  }, [qaMode, question]);
 
-  useEffect(() => {
-    if (messages.length > 0 && qaMode) {
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Scroll to bottom whenever messages or loading state changes
+  useLayoutEffect(() => {
+    if (qaMode && messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
-  }, [messages, qaMode]);
+  }, [messages, isLoading, qaMode]);
+
+  // Also scroll after a delay to catch any rendering delays
+  useEffect(() => {
+    if (qaMode && messagesContainerRef.current && (messages.length > 0 || isLoading)) {
+      const timeoutId = setTimeout(() => {
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
+      }, 50);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [messages, isLoading, qaMode]);
 
   const handleStartQA = () => {
     setQaMode(true);
@@ -166,63 +180,43 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
   const handleSendQuestion = async () => {
     if (!question.trim()) return;
 
-    const container = messagesContainerRef.current;
-
-    const isAtBottom =
-        container
-        ? container.scrollHeight - container.scrollTop - container.clientHeight < 20
-        : true;
-
     const userMessage: Message = { role: 'user', content: question };
     setMessages(prev => [...prev, userMessage]);
     setQuestion('');
     setIsLoading(true);
 
     try {
-        const response = await fetch('http://localhost:8001/api/qa', {
+      const response = await fetch('http://localhost:8001/api/qa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            question: question,
-            transcript: transcription.text,
-            segments: transcription.segments,
+          question: question,
+          transcript: transcription.text,
+          segments: transcription.segments,
         }),
-        });
+      });
 
-        if (!response.ok) throw new Error('Failed to get answer');
+      if (!response.ok) throw new Error('Failed to get answer');
 
-        const data = await response.json();
-        const assistantMessage: Message = { role: 'assistant', content: data.answer };
+      const data = await response.json();
+      const assistantMessage: Message = { role: 'assistant', content: data.answer };
 
-        setMessages(prev => [...prev, assistantMessage]);
-
-        if (container && isAtBottom) {
-        setTimeout(() => {
-            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-        }, 50);
-        }
+      setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {
-        const mockResponse: Message = {
+      const mockResponse: Message = {
         role: 'assistant',
         content: `Based on the transcript: ${
-            question.toLowerCase().includes('what')
+          question.toLowerCase().includes('what')
             ? 'The transcript discusses various topics. Could you be more specific?'
             : 'I found relevant information in the transcript that addresses your question.'
         }`,
-        };
+      };
 
-        setMessages(prev => [...prev, mockResponse]);
-
-        if (container && isAtBottom) {
-        setTimeout(() => {
-            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-        }, 50);
-        }
+      setMessages(prev => [...prev, mockResponse]);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-    };
-
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -292,16 +286,16 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
 
           <div
             className={`overflow-hidden transition-all duration-300 ${
-              showTranscript ? 'max-h-24 pb-3' : 'max-h-0'
+              showTranscript ? 'max-h-48 pb-3' : 'max-h-0'
             }`}
           >
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {transcription.segments.map((segment, index) => (
                 <div key={index} className="flex gap-3 p-2 hover:bg-white/5 rounded transition-colors">
-                  <span className="text-xs font-mono text-blue-400 whitespace-nowrap min-w-[80px]">
+                  <span className="text-xs font-mono text-blue-400 whitespace-nowrap w-[100px] flex-shrink-0">
                     {formatTime(segment.start)} - {formatTime(segment.end)}
                   </span>
-                  <p className="text-sm text-gray-300 leading-relaxed">{segment.text}</p>
+                  <p className="text-sm text-gray-300 leading-relaxed flex-1">{segment.text}</p>
                 </div>
               ))}
             </div>
@@ -318,10 +312,10 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
               key={index} 
               className="flex gap-3 p-2 hover:bg-white/5 rounded transition-colors"
             >
-              <span className="text-xs font-mono text-blue-400 whitespace-nowrap min-w-[80px]">
+              <span className="text-xs font-mono text-blue-400 whitespace-nowrap w-[100px] flex-shrink-0">
                 {formatTime(segment.start)} - {formatTime(segment.end)}
               </span>
-              <p className="text-sm text-gray-300 leading-relaxed">
+              <p className="text-sm text-gray-300 leading-relaxed flex-1">
                 {segment.text}
               </p>
             </div>
@@ -329,7 +323,7 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
         </div>
       ) : (
         // Q&A Mode: Show Chat Interface
-        <div ref={qaContainerRef} className="animate-fadeIn ">
+        <div ref={qaContainerRef} className="animate-fadeIn">
           <div
             ref={messagesContainerRef} 
             className="space-y-3 mb-3 overflow-y-auto"
