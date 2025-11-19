@@ -35,7 +35,7 @@ export default function LiveRecorder({ onTranscriptionComplete, onError }: LiveR
       const formData = new FormData();
       formData.append('file', audioBlob, 'chunk.webm');
 
-      const response = await fetch('http://localhost:8000/api/transcribe', {
+      const response = await fetch('http://localhost:8001/api/transcribe', {
         method: 'POST',
         body: formData,
       });

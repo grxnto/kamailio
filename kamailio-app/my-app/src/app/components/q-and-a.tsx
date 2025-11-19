@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, ChevronDown, ChevronUp, Send, Copy, Check } from 'lucide-react';
 
 interface TranscriptSegment {
@@ -140,23 +140,14 @@ export default function TranscriptQA({ transcription }: TranscriptQAProps) {
     }
   }, [qaMode, question]);
 
-  // Scroll to bottom whenever messages or loading state changes
-  useLayoutEffect(() => {
-    if (qaMode && messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    }
-  }, [messages, isLoading, qaMode]);
-
-  // Also scroll after a delay to catch any rendering delays
   useEffect(() => {
-    if (qaMode && messagesContainerRef.current && (messages.length > 0 || isLoading)) {
-      const timeoutId = setTimeout(() => {
-        if (messagesContainerRef.current) {
-          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-        }
+    if (qaMode && messagesContainerRef.current) {
+      setTimeout(() => {
+        messagesContainerRef.current?.scrollTo({
+          top: messagesContainerRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
       }, 50);
-      
-      return () => clearTimeout(timeoutId);
     }
   }, [messages, isLoading, qaMode]);
 
